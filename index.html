@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recherche-Hilfe</title>
+    
+    <!-- YouTube Iframe Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Globale Meme-Benachrichtigungsanzeige -->
+    <div id="memeNotification" class="meme-notification hidden">
+        <span id="notificationMessage"></span>
+        <div id="notificationSpinner" class="spinner"></div> <!-- Spinner wiederverwenden -->
+        <button id="notificationDismiss" class="dismiss-btn">×</button> <!-- Schließen-Button -->
+    </div>
+    <div class="container">
+        <h1>Recherche-Hilfe</h1>
+
+        <div class="theme-selection">
+            <label for="themeInput">Thema eingeben:</label>
+            <input type="text" id="themeInput" value="Weltraumtourismus" disabled>
+        </div>
+
+        <nav class="options">
+            <button id="btnZeitungsartikel" class="option-btn">Zeitungsartikel</button>
+            <button id="btnVideos" class="option-btn">Kurzvideos</button> <!-- NEU: Text geändert -->
+            <button id="btnPostings" class="option-btn">Postings</button>
+            <button id="btnMemes" class="option-btn">Memes</button>
+            <button id="btnChatbot" class="option-btn">Chatbot</button>
+        </nav>
+
+        <div id="contentArea" class="content-area">
+            <p>Wähle eine Option, um Beiträge zum Thema Weltraumtourismus zu sehen.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

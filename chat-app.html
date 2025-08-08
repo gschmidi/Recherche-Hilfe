@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space Tourism Debate Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "@google/genai": "https://esm.sh/@google/genai@^1.9.0",
+        "react": "https://esm.sh/react@^19.1.0",
+        "react-dom/client": "https://esm.sh/react-dom@^19.1.0/client",
+        "react/jsx-runtime": "https://esm.sh/react@^19.1.0/jsx-runtime",
+        "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+        "react/": "https://esm.sh/react@^19.1.0/"
+      }
+    }
+    </script>
+    <style>
+      html, body, #root {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background-color: #0f172a; /* bg-slate-900 */
+      }
+      #root {
+        display: flex;
+        flex-direction: column;
+      }
+      @keyframes fade-in-out {
+        0%, 100% { opacity: 0; transform: translateY(20px); }
+        10%, 90% { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in-out {
+        animation: fade-in-out 3s ease-in-out forwards;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'react';
+      import { createRoot } from 'react-dom/client';
+      import { GoogleGenAI } from "@google/genai";
+
+      // --- Bundled Code ---
+
+      // From types.ts
+      const ChatMode = {
+        SIMPLE: 'SIMPLE',
+        SCIENTIFIC: 'SCIENTIFIC',
+      };
+
+      // From constants.tsx
+      const SIMPLE_SYSTEM_INSTRUCTION = `Du bist ein Experte für Raumfahrt und Gegner des Weltraumtourismus, da du findest, dass die Nachteile die Vorteile übersteigen.
+
+- Erwähne nicht, dass du dieser Experte bist, sondern antworte allgemein.
+- Vermeide Phrasen wie "Aus meiner Sicht", "Ich finde", etc.
+- Deine Haltung ist meist kritisch gegenüber dem Weltraumtourismus.
+- Betone Kritikpunkte, wie die Umweltbelastung, Ressourcenverschwendung, Sicherheitsrisiken und soziale Ungleichheiten.
+- Spiele Vorteile und Chancen eher herunter.
+- Sprich leicht verständliches Deutsch.
+- Duze den Nutzer.
+- Halte Antworten kurz und klar.
+- Füge bei längeren Antworten am Ende eine Zusammenfassung bei, in den Kritikpunkten eine hohe Gewichtung schenkst.`;
+
+      const SCIENTIFIC_SYSTEM_INSTRUCTION = `Du bist ein hochqualifizierter Forscher, der kritisch gegenüber dem Weltraumtourismus steht. Deine Argumentation ist stets faktenbasiert und wissenschaftlich fundiert.
+
+- Erwähne nicht, dass du dieser Experte bist, sondern antworte allgemein.
+- Du findest, dass Weltraumtourismus mehr Nachteile als Vorteile mit sich bringt.
+- Verwende eine präzise, wissenschaftliche und fachliche Sprache.
+- Belege deine Aussagen mit Fakten, Daten und konkreten Beispielen aus Technologie und Forschung.
+- Zitiere bei relevanten Fakten oder Daten IMMER eine Quelle. Die Quelle MUSS im Format \`(Quelle: [Titel der Publikation oder Webseite](URL))\` angegeben werden. Erfinde keine URLs, sondern nutze echtes Wissen.
+- Sprich über Themen in bezug auf Weltraumtourismus wie Umweltbelastung, Ressourcenverschwendung, soziale Ungleichheit, Sicherheitsrisiken und das Kessler-Syndrom.
+- Erkläre komplexe Zusammenhänge verständlich, aber ohne übermäßige Vereinfachung.
+- Deine Antworten sollten informativ und überzeugend sein.`;
+
+      const SUGGESTED_QUESTIONS = [
+        "Warum ist Weltraumtourismus wichtig?",
+        "Was sind die größten Risiken?",
+        "Welche technologischen Innovationen bringt er hervor?",
+        "Ist Weltraumtourismus umweltschädlich?",
+      ];
+
+      // From components/IconComponents.tsx
+      const SendIcon = ({ className }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+        </svg>
+      );
+      const RocketIcon = ({ className }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.82m5.84-2.56a12.022 12.022 0 00-11.23-1.44m11.23 1.44a6 6 0 00-7.38-5.84m7.38 5.84l-2.16-2.16m2.16 2.16l2.16 2.16m-11.23-1.44l-2.16 2.16m2.16-2.16l-2.16-2.16m12.75 4.33l-2.16-2.16m2.16 2.16l2.16 2.16" />
+        </svg>
+      );
+      const UserIcon = ({ className }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          </svg>
+      );
+      const BotIcon = ({ className }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V8.25a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 8.25v7.5a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+      );
+      const InfoIcon = ({ className }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      );
+      const TypingIndicator = () => (
+        <div className="flex items-center space-x-1">
+          <span className="w-2 h-2 bg-slate-400 rounded-full animate-pulse [animation-delay:-0.3s]"></span>
+          <span className="w-2 h-2 bg-slate-400 rounded-full animate-pulse [animation-delay:-0.15s]"></span>
+          <span className="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></span>
+        </div>
+      );
+
+      // From components/Toast.tsx
+      const Toast = ({ message, onClose }) => {
+        useEffect(() => {
+          if (message) {
+            const timer = setTimeout(onClose, 3000);
+            return () => clearTimeout(timer);
+          }
+        }, [message, onClose]);
+
+        if (!message) return null;
+
+        return (
+          <div
+            className="fixed bottom-5 right-5 bg-slate-800 text-white py-2 px-4 rounded-lg shadow-lg border border-slate-700 animate-fade-in-out z-50"
+            role="status"
+            aria-live="polite"
+          >
+            {message}
+          </div>
+        );
+      };
+
+      // From components/Message.tsx
+      const Message = ({ message }) => {
+        const isUser = message.sender === 'user';
+        const wrapperClasses = isUser ? 'justify-end' : 'justify-start';
+        const bubbleClasses = isUser
+          ? 'bg-blue-600 text-white rounded-br-none'
+          : 'bg-slate-700 text-slate-200 rounded-bl-none';
+        const isStreamingPlaceholder = message.sender === 'bot' && message.text === '';
+
+        const parseBotResponse = (text) => {
+          if (!text) return text;
+          const combinedRegex = /(\*\*.*?\*\*|\(Quelle: \[.*?\]\(.*?https?:\/\/[^)]+\)\))/g;
+          const parts = text.split(combinedRegex);
+          return parts.map((part, index) => {
+            if (!part) return null;
+            if (part.startsWith('**') && part.endsWith('**')) {
+              return <strong key={index}>{part.slice(2, -2)}</strong>;
+            }
+            const linkRegex = /\(Quelle: \[([^\]]+)\]\(([^)]+)\)\)/;
+            const match = part.match(linkRegex);
+            if (match) {
+              const [, title, url] = match;
+              return (
+                <span key={index} className="block mt-2 text-xs">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300 underline decoration-dotted"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                    </svg>
+                    Quelle: {title}
+                  </a>
+                </span>
+              );
+            }
+            return part;
+          });
+        };
+
+        const renderContent = () => {
+          if (isStreamingPlaceholder) return <TypingIndicator />;
+          if (isUser) return message.text;
+          return parseBotResponse(message.text);
+        };
+
+        return (
+          <div className={`flex items-end space-x-3 ${wrapperClasses}`}>
+            {!isUser && (
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                <BotIcon className="w-5 h-5 text-cyan-400" />
+              </div>
+            )}
+            <div className={`px-4 py-3 rounded-lg max-w-xl lg:max-w-2xl whitespace-pre-wrap ${bubbleClasses}`}>
+              {renderContent()}
+            </div>
+            {isUser && (
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+                <UserIcon className="w-5 h-5 text-blue-300" />
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // From components/ChatInterface.tsx
+      const ChatInterface = ({ messages, isLoading, onSendMessage, showSuggestions }) => {
+        const [inputText, setInputText] = useState('');
+        const messagesEndRef = useRef(null);
+
+        const scrollToBottom = () => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        useEffect(scrollToBottom, [messages]);
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          if (!inputText.trim()) return;
+          onSendMessage(inputText);
+          setInputText('');
+        };
+
+        return (
+          <div className="flex-1 flex flex-col p-4 overflow-hidden">
+            <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+              {messages.map((msg) => <Message key={msg.id} message={msg} />)}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="pt-4 border-t border-slate-800">
+              {showSuggestions && (
+                <div className="mb-4">
+                  <p className="text-sm text-slate-400 mb-3 text-center">Oder wähle eine Frage:</p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {SUGGESTED_QUESTIONS.map((q, i) => (
+                      <button
+                        key={i}
+                        onClick={() => onSendMessage(q)}
+                        disabled={isLoading}
+                        className="bg-slate-700 hover:bg-slate-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-slate-200 text-sm px-4 py-2 rounded-lg transition-colors"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  placeholder="Stelle eine Frage..."
+                  disabled={isLoading}
+                  className="flex-1 p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition-all text-white"
+                  autoComplete="off"
+                  aria-label="Chat input"
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading || !inputText.trim()}
+                  className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold p-3 rounded-lg transition-colors flex items-center justify-center"
+                  aria-label="Send message"
+                >
+                  <SendIcon className="w-6 h-6" />
+                </button>
+              </form>
+            </div>
+          </div>
+        );
+      };
+
+      // From components/ModeToggle.tsx
+      const ModeToggle = ({ currentMode, setMode }) => {
+        const simpleStyle = currentMode === ChatMode.SIMPLE
+          ? 'bg-cyan-500 text-white shadow-md'
+          : 'bg-slate-700 text-slate-300 hover:bg-slate-600';
+        const scientificStyle = currentMode === ChatMode.SCIENTIFIC
+          ? 'bg-purple-500 text-white shadow-md'
+          : 'bg-slate-700 text-slate-300 hover:bg-slate-600';
+
+        return (
+          <div className="flex justify-center items-center gap-4 p-3 bg-slate-900/80 border-b border-t border-slate-800">
+            <div className="flex space-x-2 p-1 bg-slate-800 rounded-lg" role="radiogroup" aria-label="Chat mode">
+              <button
+                role="radio"
+                aria-checked={currentMode === ChatMode.SIMPLE}
+                onClick={() => setMode(ChatMode.SIMPLE)}
+                className={`px-4 py-2 rounded-md font-semibold transition-all duration-300 ease-in-out ${simpleStyle}`}
+              >
+                einfach
+              </button>
+              <button
+                role="radio"
+                aria-checked={currentMode === ChatMode.SCIENTIFIC}
+                onClick={() => setMode(ChatMode.SCIENTIFIC)}
+                className={`px-4 py-2 rounded-md font-semibold transition-all duration-300 ease-in-out ${scientificStyle}`}
+              >
+                wissenschaftlich
+              </button>
+            </div>
+            <div className="relative group flex items-center">
+              <InfoIcon className="w-6 h-6 text-slate-500 group-hover:text-slate-400 transition-colors" aria-hidden="true" />
+              <div 
+                role="tooltip" 
+                className="absolute bottom-full mb-2 w-72 p-3 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none -translate-x-1/2 left-1/2 z-10 shadow-lg"
+              >
+                <h4 className="font-bold text-white mb-1">Modus-Erklärung</h4>
+                <p><strong className="text-cyan-400">einfach:</strong> Eine lockere Unterhaltung.</p>
+                <p className="mt-1"><strong className="text-purple-400">wissenschaftlich:</strong> Detaillierte, faktenbasierte Diskussion mit Quellen.</p>
+                <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-slate-700"></div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // From components/Header.tsx
+      const Header = () => {
+        return (
+          <header className="p-4 bg-slate-800/50 backdrop-blur-sm border-b border-slate-700 shadow-lg flex items-center justify-center space-x-4">
+            <RocketIcon className="w-8 h-8 text-cyan-400" />
+            <div>
+              <h1 className="text-2xl font-bold text-slate-100 tracking-wider">Expertengespräch</h1>
+              <p className="text-sm text-slate-400">Du sprichst mit einem KI-gestützten Experten für Weltraumtourismus</p>
+            </div>
+          </header>
+        );
+      };
+      
+      // From App.tsx
+      const apiKey = 'AIzaSyCSI9PzASmtEyamTatDl6c8njIck1obrTU';
+      const ai = new GoogleGenAI({ apiKey });
+
+      function App() {
+        const [mode, setMode] = useState(ChatMode.SCIENTIFIC);
+        const [chat, setChat] = useState(null);
+        const [messages, setMessages] = useState([]);
+        const [isLoading, setIsLoading] = useState(false);
+        const [toastMessage, setToastMessage] = useState('');
+        const abortStreamingRef = useRef(false);
+
+        const messagesRef = useRef(messages);
+        messagesRef.current = messages;
+
+        useEffect(() => {
+            abortStreamingRef.current = true;
+            
+            const timer = setTimeout(() => {
+                const history = messagesRef.current
+                    .filter(msg => msg.id !== 'initial-message' && msg.text?.trim())
+                    .map(msg => ({
+                        role: msg.sender === 'user' ? 'user' : 'model',
+                        parts: [{ text: msg.text }],
+                    }));
+
+                const systemInstruction = mode === ChatMode.SIMPLE ? SIMPLE_SYSTEM_INSTRUCTION : SCIENTIFIC_SYSTEM_INSTRUCTION;
+                
+                const newChat = ai.chats.create({
+                    model: 'gemini-2.5-flash',
+                    config: { systemInstruction, thinkingConfig: { thinkingBudget: 0 } },
+                    history: history,
+                });
+                
+                setChat(newChat);
+                setIsLoading(false);
+
+                if (messagesRef.current.length === 0) {
+                    const welcomeText = "Hallo! Weltraumtourismus ist ein faszinierendes Thema mit vielen Facetten. Lass uns darüber sprechen. Was ist deine erste Frage?";
+                    setMessages([{ id: 'initial-message', sender: 'bot', text: welcomeText }]);
+                }
+            }, 50);
+
+            return () => {
+                clearTimeout(timer);
+                abortStreamingRef.current = true;
+            };
+        }, [mode]);
+
+
+        const handleSendMessage = async (text) => {
+          if (!text.trim() || isLoading || !chat) return;
+
+          abortStreamingRef.current = false;
+          setIsLoading(true);
+
+          const userMessage = { id: Date.now().toString(), sender: 'user', text };
+          const botMessageId = `bot-${Date.now()}`;
+          const botPlaceholder = { id: botMessageId, sender: 'bot', text: '' };
+          
+          setMessages(prev => [...prev, userMessage, botPlaceholder]);
+
+          try {
+            const stream = await chat.sendMessageStream({ message: text });
+            let botResponse = '';
+            for await (const chunk of stream) {
+              if (abortStreamingRef.current) break;
+              botResponse += chunk.text;
+              setMessages(prev => prev.map(msg => 
+                msg.id === botMessageId ? { ...msg, text: botResponse } : msg
+              ));
+            }
+          } catch (error) {
+            if (!abortStreamingRef.current) {
+              console.error("Gemini API error:", error);
+              setMessages(prev => prev.map(msg => 
+                  msg.id === botMessageId ? { ...msg, text: 'Entschuldigung, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.' } : msg
+              ));
+            }
+          } finally {
+            if (abortStreamingRef.current) {
+               console.log("Streaming aborted.");
+            }
+            setIsLoading(false);
+          }
+        };
+        
+        const handleSetMode = (newMode) => {
+            if (newMode !== mode) {
+                setMode(newMode);
+                const modeName = newMode === ChatMode.SIMPLE ? 'einfach' : 'wissenschaftlich';
+                setToastMessage(`Modus auf '${modeName}' umgestellt.`);
+            }
+        };
+        
+        const showSuggestions = !messages.some(msg => msg.sender === 'user');
+
+        return (
+          <div className="flex flex-col h-full bg-slate-900 text-white font-sans">
+            <Header />
+            <ModeToggle currentMode={mode} setMode={handleSetMode} />
+            <ChatInterface 
+              messages={messages}
+              isLoading={isLoading}
+              onSendMessage={handleSendMessage}
+              showSuggestions={showSuggestions}
+            />
+            <Toast message={toastMessage} onClose={() => setToastMessage('')} />
+          </div>
+        );
+      }
+
+      // From index.tsx
+      const rootElement = document.getElementById('root');
+      if (rootElement) {
+        const root = createRoot(rootElement);
+        root.render(<App />);
+      } else {
+        console.error("Root element #root not found in the DOM.");
+      }
+    </script>
+  </body>
+</html>

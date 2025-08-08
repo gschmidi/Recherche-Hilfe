@@ -1,0 +1,579 @@
+/* --- Globale Meme-Benachrichtigungsanzeige --- */
+.meme-notification {
+    position: fixed; /* Feste Position im Viewport */
+    top: 20px;       /* 20px vom oberen Rand */
+    right: 20px;     /* 20px vom rechten Rand */
+    background-color: #343a40; /* Dunkler Hintergrund */
+    color: white;    /* Weiße Schrift */
+    padding: 15px 20px; /* Innenabstand */
+    border-radius: 8px; /* Abgerundete Ecken */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Schatten */
+    display: flex;   /* Flexbox für Layout */
+    align-items: center; /* Vertikal zentriert */
+    gap: 10px;       /* Abstand zwischen Elementen */
+    z-index: 1000;   /* Immer über allem anderen */
+    opacity: 1;      /* Standard-Sichtbarkeit */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Sanfte Übergänge */
+    min-width: 250px; /* Mindestbreite */
+    max-width: 350px; /* Maximalbreite */
+    pointer-events: all; /* Klicks zulassen */
+    cursor: pointer; /* Zeigt an, dass es klickbar ist */
+}
+
+.meme-notification.hidden {
+    opacity: 0;
+    transform: translateY(-20px); /* Leicht nach oben verschieben beim Ausblenden */
+    pointer-events: none; /* Klicks nicht zulassen, wenn versteckt */
+}
+
+/* Zustände der Anzeige */
+.meme-notification.loading {
+    background-color: #007bff; /* Blau für Laden */
+}
+
+.meme-notification.success {
+    background-color: #28a745; /* Grün für Erfolg */
+}
+
+.meme-notification.info {
+    background-color: #ffc107; /* Gelb für Info */
+    color: #333; /* Dunkle Schrift auf gelbem Hintergrund */
+}
+
+/* Spinner im Benachrichtigungsfeld */
+.meme-notification .spinner {
+    border-color: rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0; /* Verhindert Schrumpfung des Spinners */
+}
+
+/* Icons (anstatt Spinner für Erfolg/Info - optional, komplexer) */
+/* Du könntest hier SVGs für Checkmark oder Info-Icon einfügen, ähnlich dem Volume-Icon */
+
+/* Schließen-Button */
+.dismiss-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-left: auto; /* Schiebt den Button ganz nach rechts */
+    padding: 0 5px;
+    line-height: 1; /* Vertikale Zentrierung des X */
+    transition: color 0.2s ease;
+}
+
+.dismiss-btn:hover {
+    color: #f8d7da; /* Hellrot beim Hover */
+}
+
+.meme-notification.info .dismiss-btn {
+    color: #333; /* Dunkler X-Button auf gelbem Hintergrund */
+}
+.meme-notification.info .dismiss-btn:hover {
+    color: #dc3545; /* Rot beim Hover auf gelbem Hintergrund */
+}
+
+/* Responsiv Anpassungen für die Anzeige */
+@media (max-width: 768px) {
+    .meme-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px; /* Volle Breite auf kleinen Bildschirmen */
+        max-width: unset; /* Keine maximale Breite */
+        min-width: unset;
+        font-size: 0.9em;
+        padding: 10px 15px;
+    }
+    .meme-notification .spinner {
+        width: 15px;
+        height: 15px;
+    }
+    .dismiss-btn {
+        font-size: 1.2em;
+    }
+}
+
+.video-top-message {
+    background-color: #343a40; /* Dunkler Hintergrund, passend zum Video-Kontext */
+    color: white; /* Weiße Schrift */
+    padding: 15px 20px; /* Innenabstand */
+    text-align: center; /* Text zentrieren */
+    font-size: 1.1em; /* Schriftgröße */
+    font-weight: bold; /* Fettgedruckt */
+    border-radius: 6px 6px 0 0; /* Abgerundete Ecken oben */
+    margin-bottom: 5px; /* Kleiner Abstand zum Videoplayer */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Leichter Schatten */
+    z-index: 10; /* Stellen Sie sicher, dass es über dem Video-Container liegt, falls es überlappt */
+}
+
+.video-player-container {
+    width: 100%;
+    height: calc(100vh - 180px); 
+    overflow-y: scroll; 
+    scroll-snap-type: y mandatory; 
+    -webkit-overflow-scrolling: touch; 
+    border-radius: 6px; 
+    background-color: #000; 
+
+    /* NEU: Scrollbar verstecken für Webkit-Browser (Chrome, Safari, Edge) */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    /* NEU: Scrollbar verstecken für Firefox */
+    scrollbar-width: none; 
+}
+
+/* NEU: Einzelnes Video-Slide (der Bereich für jedes Video) */
+.video-slide {
+    width: 100%;
+    height: 100%; 
+    scroll-snap-align: start; 
+    position: relative; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000; 
+    overflow: hidden; 
+}
+
+/* NEU: End-Slide Styling */
+.video-end-slide {
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #333; /* Dunklerer Hintergrund */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2em;
+    line-height: 1.5;
+}
+
+.video-end-slide p {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.video-end-slide .option-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.video-end-slide .option-btn:hover {
+    background-color: #0056b3;
+}
+
+
+/* Der YouTube Player Div, der später zum Iframe wird */
+.youtube-player-placeholder {
+    width: 100%;
+    height: 100%;
+}
+
+/* NEU: Container für die Videosteuerung (nur noch Mute-Button) */
+.video-controls {
+    position: absolute;
+    top: 50%; 
+    right: 20px; 
+    transform: translateY(-50%); 
+    z-index: 11; 
+    display: flex;
+    flex-direction: column; 
+    gap: 15px; /* Abstand zwischen den Buttons, falls weitere hinzugefügt werden */
+}
+
+/* NEU: Mute-Button Styling (Play/Pause Button entfernt) */
+.mute-button { 
+    background-color: rgba(0, 0, 0, 0.5); 
+    border: none;
+    border-radius: 50%; 
+    width: 60px; 
+    height: 60px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    color: white; 
+}
+
+.mute-button:hover { 
+    background-color: rgba(0, 0, 0, 0.7); 
+    transform: scale(1.1); 
+}
+
+/* Icon-Styling innerhalb der Buttons (für SVG-Pfade) */
+.mute-button svg { 
+    fill: white; 
+    width: 30px; 
+    height: 30px; 
+}
+
+/* Anpassung der content-area für Videos, damit sie den gesamten Platz ausfüllt */
+.content-area.video-mode {
+    padding: 0; 
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    border-radius: 0;
+    overflow-y: hidden; 
+    min-height: calc(100vh - 120px); 
+}
+
+
+/* Bestehende Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+h1 {
+    text-align: center;
+    color: #0056b3;
+    margin-bottom: 25px; 
+}
+
+
+/* Styling für das Theme-Textfeld-Container */
+.theme-selection {
+    text-align: center;
+    margin-bottom: 30px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; 
+    flex-wrap: wrap; 
+}
+
+.theme-selection label {
+    font-size: 1em;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Styling für das Textfeld */
+.theme-selection input[type="text"] {
+    padding: 8px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #fff;
+    font-size: 1em;
+    color: #333;
+    outline: none;
+    cursor: text; 
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-selection input[type="text"]:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Styling für den deaktivierten Zustand des Textfeldes */
+.theme-selection input[type="text"]:disabled {
+    cursor: not-allowed; 
+    opacity: 0.7; 
+    background-color: #e9e9e9; 
+    border-color: #ccc; 
+    box-shadow: none; 
+    color: #666; 
+}
+
+/* Verhindert, dass der reguläre Hover-Effekt auf :disabled angewendet wird */
+.theme-selection input[type="text"]:disabled:hover {
+    border-color: #ccc; 
+    box-shadow: none; 
+}
+
+
+.options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.option-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    min-width: 120px;
+    text-align: center;
+}
+
+.option-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.content-area {
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 25px;
+    min-height: 300px;
+    border: 1px solid #ced4da;
+    overflow-y: auto; 
+}
+
+/* NEU: Styling für den Chatbot-Modus der content-area */
+.content-area.chatbot-mode {
+    padding: 0; 
+    border: none; 
+    box-shadow: none; 
+    background-color: transparent; 
+    border-radius: 0; 
+    overflow-y: hidden; 
+    
+    height: calc(100vh - 180px); 
+    min-height: calc(100vh - 180px); 
+}
+
+
+/* Spezifische Stile für Inhalte (allgemein) */
+.content-item {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px; 
+    padding: 20px; 
+    margin-bottom: 25px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    cursor: pointer; 
+    transition: transform 0.2s ease, box-shadow 0.2s ease; 
+}
+
+/* Hover-Effekt für alle content-items */
+.content-item:hover {
+    transform: translateY(-3px); 
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); 
+}
+
+
+.content-item h3 {
+    color: #0056b3; 
+    font-size: 1.5em; 
+    font-weight: bold; 
+    margin-top: 0;
+    margin-bottom: 10px;
+    line-height: 1.3; 
+}
+
+.content-item p {
+    color: #555; 
+    font-size: 1em; 
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+/* Styling für den Info-Bereich (Datum, Lesezeit, Quelle) */
+.content-item .article-meta {
+    font-size: 0.85em; 
+    color: #777; 
+    margin-top: 15px; 
+    margin-bottom: 15px; 
+    border-top: 1px solid #eee; 
+    padding-top: 10px; 
+    line-height: 1.4;
+}
+
+.content-item .article-meta strong {
+    color: #333; 
+    font-weight: bold;
+}
+
+
+.content-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-top: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.content-item iframe {
+    width: 100%;
+    height: 315px; 
+    border: none;
+    border-radius: 4px;
+}
+
+/* X (Twitter) Tweet Styling Anpassungen */
+.content-item blockquote.twitter-tweet {
+    margin: 0;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+.chatbot-message {
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.chatbot-message.user {
+    background-color: #d1e7dd; 
+    align-self: flex-end;
+    margin-left: auto;
+    text-align: right;
+}
+
+.chatbot-message.bot {
+    background-color: #f8d7da; 
+    align-self: flex-start;
+    margin-right: auto;
+    text-align: left;
+}
+
+.chatbot-conversation {
+    display: flex;
+    flex-direction: column;
+}
+
+.zeitungsartikel-link {
+    display: inline-block; 
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 15px; 
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.zeitungsartikel-link:hover {
+    background-color: #007bff;
+    color: white;
+    text-decoration: none; 
+}
+
+
+/* --- Styles für das Ladefeld --- */
+.loading-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px; 
+    background-color: #f0f4f7; 
+    border-radius: 8px; 
+    color: #555;
+    font-size: 1.1em;
+    text-align: center;
+    padding: 20px;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #007bff; 
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite; 
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-message {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+    .container {
+        margin: 15px;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    .theme-selection {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .theme-selection input[type="text"] { 
+        width: 100%; 
+    }
+
+    .options {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .option-btn {
+        width: 80%;
+        min-width: unset;
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+
+    .content-area {
+        padding: 15px;
+    }
+    /* Anpassungen für Videos im Responsive Design */
+    .content-area.video-mode {
+        min-height: calc(100vh - 100px); 
+    }
+
+    .video-player-container {
+        height: calc(100vh - 100px); 
+    }
+    /* NEU: Responsive Anpassung für Chatbot-Modus */
+    .content-area.chatbot-mode {
+        height: calc(100vh - 180px); /* Etwas weniger, da mobile Header kleiner sein könnte */
+        min-height: calc(100vh - 180px);
+    }
+
+    .content-item {
+        padding: 10px;
+    }
+
+    .chatbot-message {
+        max-width: 95%;
+    }
+}
