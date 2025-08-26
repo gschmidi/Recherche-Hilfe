@@ -648,13 +648,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        let itemsToDisplay = allThemesContentData[currentThemeKey] ? allThemesContentData[currentThemeKey][category] : null;
 
-        const items = allThemesContentData[currentThemeKey] ? allThemesContentData[currentThemeKey][category] : null;
-
-        if (!items || items.length === 0) {
+        if (!itemsToDisplay || itemsToDisplay.length === 0) {
             contentArea.innerHTML = `<p>Leider keine ${category}-Beiträge zum Thema "${themeInput.value}" gefunden.</p>`;
             return;
         }
+
+        if (category === 'zeitungsartikel' || category === 'postings') {
+            itemsToDisplay = shuffleArray(itemsToDisplay);
+        }
+
 
         switch (category) {
 case 'memes':
@@ -708,7 +712,7 @@ case 'memes':
             }
             break; // Ende des 'memes'-Case
             case 'postings':
-                items.forEach(item => {
+ 		itemsToDisplay.forEach(item => {
                     if (item.type === 'twitter') {
                         const tweetWrapper = document.createElement('div');
                         tweetWrapper.classList.add('content-item');
@@ -719,7 +723,7 @@ case 'memes':
                 loadTwitterWidgets(contentArea);
                 break;
             case 'zeitungsartikel':
-                items.forEach(item => {
+		 itemsToDisplay.forEach(item => {
                     const articleDiv = document.createElement('div');
                     articleDiv.classList.add('content-item');
                     articleDiv.innerHTML = `

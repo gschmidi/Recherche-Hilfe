@@ -340,7 +340,7 @@
       const ai = new GoogleGenAI({ apiKey });
 
       function App() {
-        const [mode, setMode] = useState(ChatMode.SCIENTIFIC);
+	const [mode, setMode] = useState(ChatMode.SIMPLE);
         const [chat, setChat] = useState(null);
         const [messages, setMessages] = useState([]);
         const [isLoading, setIsLoading] = useState(false);
