@@ -263,11 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'type': 'twitter',
         'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Modern billionaires are the most selfish humans in history.<br><br>Past billionaires:<br><br>- Built libraries<br>- Cured diseases<br>- Advanced civilization.<br><br>Today&#39;s? Space tourism and yacht measuring contests.<br><br>Here&#39;s the ugly truth of modern billionaires: 🧵 <a href="https://t.co/eezWg9nF0i">pic.twitter.com/eezWg9nF0i</a></p>&mdash; Logan Weaver (@LogWeaver) <a href="https://twitter.com/LogWeaver/status/1949082214614118440?ref_src=twsrc%5Etfw">July 26, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
     },
-
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space tourism is reaching new heights! Private companies are launching civilians to the edge of space for unforgettable views and weightless experiences. Would you take a trip among the stars? <a href="https://twitter.com/hashtag/SpaceTourism?src=hash&amp;ref_src=twsrc%5Etfw">#SpaceTourism</a> <a href="https://twitter.com/hashtag/FutureTravel?src=hash&amp;ref_src=twsrc%5Etfw">#FutureTravel</a> <a href="https://t.co/xqXzwNebWw">pic.twitter.com/xqXzwNebWw</a></p>&mdash; Rafael (@RafaelMCam) <a href="https://twitter.com/RafaelMCam/status/1946606087475429414?ref_src=twsrc%5Etfw">July 19, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
     {
         'type': 'twitter',
         'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space tourism: Rockets emit 100 times more CO2 per passenger than flights – imagine a whole industry <a href="https://t.co/ypqinXj77k">https://t.co/ypqinXj77k</a> <a href="https://t.co/xJtHTV6jWy">pic.twitter.com/xJtHTV6jWy</a></p>&mdash; SPACE.com (@SPACEdotcom) <a href="https://twitter.com/SPACEdotcom/status/1419764070119579655?ref_src=twsrc%5Etfw">July 26, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
@@ -277,15 +272,63 @@ document.addEventListener('DOMContentLoaded', () => {
         'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Tourism for successful people: the world&#39;s first space hotel will open as early as 2027.<br><br>Built by Above: Space Development, it will host 400 guests and 112 crew members on a rotating structure designed to create gravity similar to the moon.<br><br>The hotel will offer a full-service… <a href="https://t.co/A6Nr5VNW0u">pic.twitter.com/A6Nr5VNW0u</a></p>&mdash; Black Hole (@konstructivizm) <a href="https://twitter.com/konstructivizm/status/1936988331499483200?ref_src=twsrc%5Etfw">June 23, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
     },
 
-
-    {
-        'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Private space tourism is growing, making trips to orbit affordable. <a href="https://twitter.com/hashtag/SpaceTourism?src=hash&amp;ref_src=twsrc%5Etfw">#SpaceTourism</a> <a href="https://twitter.com/hashtag/FutureOfTravel?src=hash&amp;ref_src=twsrc%5Etfw">#FutureOfTravel</a></p>&mdash; Karen Vazquez (@KarenVazqu84161) <a href="https://twitter.com/KarenVazqu84161/status/1951069445247606926?ref_src=twsrc%5Etfw">July 31, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    },
     {
         'type': 'twitter',
         'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Katy Perry says she now looks at Earth through a “whole new perspective” after traveling to space<br><br>She was in space for a total of 11 minutes <a href="https://t.co/3ErSeVJt3d">pic.twitter.com/3ErSeVJt3d</a></p>&mdash; Daily Noud (@DailyNoud) <a href="https://twitter.com/DailyNoud/status/1911819148755149176?ref_src=twsrc%5Etfw">April 14, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
-    }
+    },
+//neue Beiträge
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Mit dem <a href="https://twitter.com/hashtag/Weltraumtourismus?src=hash&amp;ref_src=twsrc%5Etfw">#Weltraumtourismus</a> zeigt eine finanzielle Elite ihre krasse Abgehobenheit.<br>Diese Leute wissen nicht wohin mit ihrem Geld.<br>Es ist so absurd, wie ungleich Vermögen auf dieser Welt verteilt sind. Das ist ein Treiber für Extremismus und schadet unserer Demokratie.</p>&mdash; Till Steffen (@till_steffen) <a href="https://twitter.com/till_steffen/status/1912119045605704180?ref_src=twsrc%5Etfw">April 15, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Unglaublich, was dieser „persönliche Spaß“ einiger dekadenter Promis für Auswirkungen auf das Klima und damit auf die Allgemeinheit hat. 🤮😡<a href="https://twitter.com/hashtag/Weltraumtourismus?src=hash&amp;ref_src=twsrc%5Etfw">#Weltraumtourismus</a></p>&mdash; Karin Paprotta 🤜🏻🤛🏿 (@KPaprotta) <a href="https://twitter.com/KPaprotta/status/1912095565803823509?ref_src=twsrc%5Etfw">April 15, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Erstaunlich, wie einig man sich sein kann, dass Bezos seine Raketen hauptsächlich für sein Ego und Weltraumtourismus für Superreiche entwickelt hat, während sein Lieferbusiness auf knallharter Ausbeutung beruht. Aber der böse Milliardär ist Musk. Seufz. Kulturkampf ist halt am… <a href="https://t.co/EZ1EqAaMyy">pic.twitter.com/EZ1EqAaMyy</a></p>&mdash; Der Kommunikator 🔬 (@DrHannesAmon) <a href="https://twitter.com/DrHannesAmon/status/1912073474262118483?ref_src=twsrc%5Etfw">April 15, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Was sagen eigentlich die <a href="https://twitter.com/KlimaSeniorin?ref_src=twsrc%5Etfw">@KlimaSeniorin</a> dazu? <a href="https://twitter.com/hashtag/Weltraumtourismus?src=hash&amp;ref_src=twsrc%5Etfw">#Weltraumtourismus</a> <a href="https://twitter.com/hashtag/Feminismus?src=hash&amp;ref_src=twsrc%5Etfw">#Feminismus</a> <a href="https://twitter.com/hashtag/CO2?src=hash&amp;ref_src=twsrc%5Etfw">#CO2</a> <a href="https://twitter.com/hashtag/Klimaschutz?src=hash&amp;ref_src=twsrc%5Etfw">#Klimaschutz</a> <a href="https://twitter.com/amazon?ref_src=twsrc%5Etfw">@amazon</a> -Gründer Jeff Bezos hat eine rein weibliche Besatzung ins All geschickt. 🚀✨🪐 <a href="https://t.co/TxWXYMSZ4i">pic.twitter.com/TxWXYMSZ4i</a></p>&mdash; Sandro Hess, Rheintal (@sandro_w_hess) <a href="https://twitter.com/sandro_w_hess/status/1912108740263674207?ref_src=twsrc%5Etfw">April 15, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Space-Frage des Tages: Warum könnten Stratosphären-Ballons die Zukunft des Weltraumtourismus sein?<br><br>Antwort: Das spanische Unternehmen Eos X Space hat gerade das amerikanische Startup Space Perspective übernommen, um den Stratosphären-Tourismus zu retten. Stratosphären-Ballons… <a href="https://t.co/AYsqgdnJgl">pic.twitter.com/AYsqgdnJgl</a></p>&mdash; space-magazin (@spacemag2025) <a href="https://twitter.com/spacemag2025/status/1950490299794375110?ref_src=twsrc%5Etfw">July 30, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">ich will keine VR-Brillen, ich will keinen Weltraumtourismus und keine autonomen Autos, ich will dass die Bahnen pünktlich kommen und dass niemand Hunger hat</p>&mdash; E L H O T Z O (@elhotzo) <a href="https://twitter.com/elhotzo/status/1675098356006236160?ref_src=twsrc%5Etfw">July 1, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Thema Weltraumtourismus <a href="https://t.co/MBcUQYkEZv">pic.twitter.com/MBcUQYkEZv</a></p>&mdash; Der Elfenbeinturm (@MontyDelMuro) <a href="https://twitter.com/MontyDelMuro/status/1911878374374375750?ref_src=twsrc%5Etfw">April 14, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Weltraumtourismus gehört wirklich zum Dümmsten, was die Menschheit erfunden hat. Die Raumfahrt wurde schließlich nicht erfunden, um B-Promis und neurotische Milliardäre mit viel Energie und auf Kosten der Umwelt ins All zu schießen.</p>&mdash; S Mueller-Kraenner (@sascha_m_k) <a href="https://twitter.com/sascha_m_k/status/1912013769376415983?ref_src=twsrc%5Etfw">April 15, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Bezos Rückkehr in den Weltraumtourismus endet mit einer Fallschirmpanne <a href="https://t.co/KZnwEZOizm">https://t.co/KZnwEZOizm</a> <a href="https://t.co/eEATRc2MFx">pic.twitter.com/eEATRc2MFx</a></p>&mdash; WELT (@welt) <a href="https://twitter.com/welt/status/1792241683083489308?ref_src=twsrc%5Etfw">May 19, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Der britische Milliardär wollte den Weltraumtourismus revolutionieren. Jetzt braucht seine Firma ein ganz neues Raumschiff, weil das alte doch nichts taugt. Ist das der Anfang vom Ende? <a href="https://t.co/sG6o6yHC24">https://t.co/sG6o6yHC24</a></p>&mdash; DER SPIEGEL (@derspiegel) <a href="https://twitter.com/derspiegel/status/1734859339394158668?ref_src=twsrc%5Etfw">December 13, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Schlichte Frage: Wie verträgt sich Musks Forderung nach CO2-Reduktion durch Besteuerung mit tausenden <a href="https://twitter.com/hashtag/Starlink?src=hash&amp;ref_src=twsrc%5Etfw">#Starlink</a>-Satelliten, die er ins All schießen lässt, Mars-Missionen und Weltraumtourismus als Geschäftsmodell?<a href="https://twitter.com/hashtag/ElonMusk?src=hash&amp;ref_src=twsrc%5Etfw">#ElonMusk</a> <a href="https://t.co/Fu42TeOP5y">https://t.co/Fu42TeOP5y</a></p>&mdash; Michael Esders (@MichaelEsders) <a href="https://twitter.com/MichaelEsders/status/1814884461902737901?ref_src=twsrc%5Etfw">July 21, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="de" dir="ltr">Bericht: Warum ist Weltraumtourismus problematisch?<a href="https://t.co/11MPqOInsA">https://t.co/11MPqOInsA</a><a href="https://twitter.com/hashtag/technologie?src=hash&amp;ref_src=twsrc%5Etfw">#technologie</a> <a href="https://twitter.com/hashtag/raumfahrt?src=hash&amp;ref_src=twsrc%5Etfw">#raumfahrt</a> <a href="https://twitter.com/hashtag/weltraum?src=hash&amp;ref_src=twsrc%5Etfw">#weltraum</a> <a href="https://twitter.com/hashtag/umwelt?src=hash&amp;ref_src=twsrc%5Etfw">#umwelt</a> <a href="https://twitter.com/hashtag/nachhaltig?src=hash&amp;ref_src=twsrc%5Etfw">#nachhaltig</a> <a href="https://twitter.com/hashtag/tourismus?src=hash&amp;ref_src=twsrc%5Etfw">#tourismus</a> <a href="https://t.co/HO0ZA8W9Qu">pic.twitter.com/HO0ZA8W9Qu</a></p>&mdash; Chris G. (@artdefects) <a href="https://twitter.com/artdefects/status/1920434531422642680?ref_src=twsrc%5Etfw">May 8, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+},
+{
+    'type': 'twitter',
+    'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space tourism needs urgent regulation-we don&#39;t need another source of emission.<br><br>Air Pollution Caused By Space Launches Needs Urgent Attention <a href="https://t.co/OnFAf02SoE">https://t.co/OnFAf02SoE</a></p>&mdash; Reena Gupta (@Reena_Guptaa) <a href="https://twitter.com/Reena_Guptaa/status/1962061428371964255?ref_src=twsrc%5Etfw">August 31, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+}
 
             ],
             zeitungsartikel: [
