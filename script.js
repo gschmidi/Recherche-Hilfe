@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPlayingVideoPlayer = null;
     let videoIntersectionObserver = null;
 
+    // isGloballyMuted wird jetzt primär den Zustand des zuletzt
+    // interaktiven Players widerspiegeln (vom Nutzer unmutet oder gemutet).
+    // Es wird aber NICHT mehr automatisch die Lautstärke von neu erscheinenden Videos steuern.
     let isGloballyMuted = true;
 
     const loadedCategoriesPerTheme = {};
@@ -169,7 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
             delete youtubePlayers[playerId];
         }
         currentPlayingVideoPlayer = null;
-
+        // Beim Reset der Content-Area wird der globale Mute-Zustand auf true zurückgesetzt.
+        // Das ist wichtig, damit beim nächsten Aufruf der Video-Kategorie alle Videos stumm starten.
+        isGloballyMuted = true;
     }
 
     const volumeUpSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.98 7-4.66 7-8.77s-2.99-7.79-7-8.77z"/></svg>`;
@@ -179,13 +184,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleMute(player, buttonElement) {
         if (player.isMuted()) {
             player.unMute();
-            player.setVolume(10);
+            player.setVolume(10); // Setze Lautstärke auf 10% bei Klick auf Unmute
             buttonElement.innerHTML = volumeUpSvg;
-            isGloballyMuted = false;
+            isGloballyMuted = false; // Benutzer hat Ton aktiviert
+            console.log(`Player ${player.h.id} unmuted to 10%. isGloballyMuted: ${isGloballyMuted}`);
         } else {
             player.mute();
             buttonElement.innerHTML = volumeOffSvg;
-            isGloballyMuted = true;
+            isGloballyMuted = true; // Benutzer hat Ton deaktiviert
+            console.log(`Player ${player.h.id} muted. isGloballyMuted: ${isGloballyMuted}`);
         }
     }
 
@@ -247,6 +254,61 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: "Inside Virgin Galactic’s first tourist spaceflight",
                     embedUrl: "https://www.youtube.com/embed/2V4VU8p6Au0", 
                     description: "SkyNews"
+                },
+                {
+                    title: "Der Weltraumtourismus – Der neue Goldrausch!",
+                    embedUrl: "https://www.youtube.com/embed/Lnpp7_Plpvc", 
+                    description: "vladi_facts"
+                },
+                {
+                    title: "Weltraumtourismus: Wem steht der nächste Start ins All bevor?",
+                    embedUrl: "https://www.youtube.com/embed/tiZuKdg-2PA", 
+                    description: "Sajoai"
+                },
+                {
+                    title: "Die Aufgaben eines Weltraumtourismus Managers",
+                    embedUrl: "https://www.youtube.com/embed/vrz7Wt89gK8", 
+                    description: "UnglaublicheFaktenzu"
+                },
+                {
+                    title: "Do You Think Space Tourism is Useless? w/ Brian Cox",
+                    embedUrl: "https://www.youtube.com/embed/E8McWcKL27U", 
+                    description: "spacein1minute"
+                },
+                {
+                    title: "When Will Space Tourism Be Affordable?",
+                    embedUrl: "https://www.youtube.com/embed/cQG-3TtVWlA", 
+                    description: "science.and.beyond"
+                },
+                {
+                    title: "Space Tourism's Impact: Women, Overview Effect, and Beyond!",
+                    embedUrl: "https://www.youtube.com/embed/qEGcbMtT7pI", 
+                    description: "expeditionmoney"
+                },
+                {
+                    title: "The Future of Space Tourism: When Can We Visit Space?",
+                    embedUrl: "https://www.youtube.com/embed/qfJLG71yNsQ", 
+                    description: "CuriosityaboutFacts-07"
+                },
+                {
+                    title: "Space Tourism: A Reality in the 2030s",
+                    embedUrl: "https://www.youtube.com/embed/2iBk8jsy5KU", 
+                    description: "TheScience-t3m"
+                },
+                {
+                    title: "Song: Earth – Mirage Onmymind",
+                    embedUrl: "https://www.youtube.com/embeded/yXJmMwZqpWQ", 
+                    description: "MirageOnmymind"
+                },
+                {
+                    title: "SpaceX Futuristic Space Hotel – The Ultimate Luxury in Orbit!",
+                    embedUrl: "https://www.youtube.com/embeded/auPScv7qD9Q", 
+                    description: "FuturePulseStation"
+                },
+                {
+                    title: "PropTech Pulse – Ready for a stay that’s truly out of this world?",
+                    embedUrl: "https://www.youtube.com/embeded/JCtijrXnq7g", 
+                    description: "Aurum_PropTech"
                 }
 
             ],
@@ -261,7 +323,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
         'type': 'twitter',
-        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Modern billionaires are the most selfish humans in history.<br><br>Past billionaires:<br><br>- Built libraries<br>- Cured diseases<br>- Advanced civilization.<br><br>Today&#39;s? Space tourism and yacht measuring contests.<br><br>Here&#39;s the ugly truth of modern billionaires: 🧵 <a href="https://t.co/eezWg9nF0i">pic.twitter.com/eezWg9nF0i</a></p>&mdash; Logan Weaver (@LogWeaver) <a href="https://twitter.com/LogWeaver/status/1949082214614118440?ref_src=twsrc%5Etfw">July 26, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Modern billionaires are the most selfish humans in history.<br><br>Past billionaires:<br><br>- Built libraries<br>- Cured diseases<br>- Advanced civilization.<br><br>Today&#39;s? Space tourism and yacht measuring contests.<br><br>Here&#39s the ugly truth of modern billionaires: 🧵 <a href="https://t.co/eezWg9nF0i">pic.twitter.com/eezWg9nF0i</a></p>&mdash; Logan Weaver (@LogWeaver) <a href="https://twitter.com/LogWeaver/status/1949082214614118440?ref_src=twsrc%5Etfw">July 26, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
+    },
+
+    {
+        'type': 'twitter',
+        'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Space tourism is reaching new heights! Private companies are launching civilians to the edge of space for unforgettable views and weightless experiences. Would you take a trip among the stars? <a href="https://twitter.com/hashtag/SpaceTourism?src=hash&amp;ref_src=twsrc%5Etfw">#SpaceTourism</a> <a href="https://twitter.com/hashtag/FutureTravel?src=hash&amp;ref_src=twsrc%5Etfw">#FutureTravel</a> <a href="https://t.co/xqXzwNebWw">pic.twitter.com/xqXzwNebWw</a></p>&mdash; Rafael (@RafaelMCam) <a href="https://twitter.com/RafaelMCam/status/1946606087475429414?ref_src=twsrc%5Etfw">July 19, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
     },
     {
         'type': 'twitter',
@@ -271,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'type': 'twitter',
         'html': '<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Tourism for successful people: the world&#39;s first space hotel will open as early as 2027.<br><br>Built by Above: Space Development, it will host 400 guests and 112 crew members on a rotating structure designed to create gravity similar to the moon.<br><br>The hotel will offer a full-service… <a href="https://t.co/A6Nr5VNW0u">pic.twitter.com/A6Nr5VNW0u</a></p>&mdash; Black Hole (@konstructivizm) <a href="https://twitter.com/konstructivizm/status/1936988331499483200?ref_src=twsrc%5Etfw">June 23, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>'
     },
+
 
     {
         'type': 'twitter',
@@ -374,8 +442,31 @@ document.addEventListener('DOMContentLoaded', () => {
         'date': "28.09.2020",
         'readTime': "4 Minuten",
         'journal': "Österreichische Akadamie der Wissenschaften (ÖAW)"
+    },
+    {
+        'title': "Weltraumtourismus, der neue Trend",
+        'snippet': "Weltraumtourismus ist mehr als ein PR-Gag für Superreiche. Er markiert einen Paradigmenwechsel in der Raumfahrt: von staatlich gelenkter Forschung zu kommerziell geprägter Exploration. Auch wenn heute nur Wenige teilnehmen können, werden die technologischen Fortschritte, die Wettbewerbsdynamik und das wachsende Interesse auf lange Sicht dafür sorgen, dass das All immer näher rückt – nicht nur physisch, sondern auch emotional und kulturell.",
+        'link': "https://finanzkun.de/artikel/weltraumtourismus-der-neue-trend/",
+        'date': "11.04.2025",
+        'readTime': "4 Minuten",
+        'journal': "FinanzKun.de kompetent.transparent.informativ."
+    },
+    {
+        'title': "Müssen wir zuerst die Probleme auf der Erde lösen bevor wir uns auf den Weg in den Weltraum machen?",
+        'snippet': "Kurz gesagt: Ich bin der Meinung, dass sich die Frage „Müssen wir zuerst die Probleme auf der Erde lösen bevor wir uns auf den Weg in den Weltraum machen?“ gar nicht erst stellt. Wir müssen die Probleme lösen, ja! Aber der Weg spielt keine Rolle. Die Ressourcen die wir in eine etwaige Erforschung des Weltraums stecken sind nicht verschwendet, weil sie am Ende dabei helfen, die Probleme auf der Erde zu lösen. Und umgekehrt gilt das gleiche. Je mehr Wege wir bei der Lösung dieser Probleme verfolgen, desto besser! Und am Ende waren wir Menschen immer dann am erfolgreichsten, wenn wir unserer Neugier und unserer Faszination gefolgt sind…",
+        'link': "https://astrodicticum-simplex.at/2017/03/muessen-wir-zuerst-die-probleme-auf-der-erde-loesen-bevor-wir-uns-auf-den-weg-in-den-weltraum-machen/",
+        'date': "20.03.2017",
+        'readTime': "3 Minuten",
+        'journal': "Astrodicticum Simplex"
+    },
+    {
+        'title': "Die Rolle des Weltraumtourismus in der modernen Raumfahrt",
+        'snippet': "Der Weltraumtourismus spricht sowohl innere Antriebe wie Neugier und den Wunsch nach Ruhm an, als auch äußere Reize wie die Aussicht auf die Erde aus dem All und das Gefühl der Schwerelosigkeit. Diese Kombination aus inneren und äußeren Faktoren macht den Reiz des Weltraumtourismus aus.",
+        'link': "https://www.it-boltwise.de/die-rolle-des-weltraumtourismus-in-der-modernen-raumfahrt.html",
+        'date': "19.05.2025",
+        'readTime': "3 Minuten",
+        'journal': "IT BOLTWISE"
     }
-
             ],
             chatbot: [] 
         },
@@ -559,10 +650,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (category === 'videos') {
             const videoMessageDiv = document.createElement('div');
             videoMessageDiv.classList.add('video-top-message');
+            // NEU: Klarer Hinweis für den Benutzer, besonders für iOS
             videoMessageDiv.innerHTML = `
                 <p>Swipe im Videoplayer nach unten, um weitere Kurzvideos zu entdecken.</p>
+                <p class="ios-hint" style="font-size: 0.9em; margin-top: 10px; color: #ced4da;">(Videos starten immer stumm. Tippen Sie den Lautstärke-Button an, um den Ton auf 10% einzuschalten.)</p>
             `;
-            contentArea.appendChild(videoMessageDiv); // Füge die Nachricht zuerst hinzu
+            contentArea.appendChild(videoMessageDiv);
 
             const videoPlayerContainer = document.createElement('div');
             videoPlayerContainer.classList.add('video-player-container');
@@ -574,7 +667,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             videoIntersectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    const playerId = entry.target.querySelector('.youtube-player-placeholder').id;
+                    const playerPlaceholder = entry.target.querySelector('.youtube-player-placeholder');
+                    if (!playerPlaceholder) return; // Überspringen, wenn Platzhalter nicht gefunden
+                    const playerId = playerPlaceholder.id;
                     const player = youtubePlayers[playerId];
 
                     if (!player || !player.muteButtonElement) {
@@ -583,30 +678,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     if (entry.isIntersecting && entry.intersectionRatio >= 0.8) {
+                        // Video ist in den Sichtbereich gekommen
                         if (currentPlayingVideoPlayer && currentPlayingVideoPlayer !== player) {
-                            console.log(`Stopping player ${currentPlayingVideoPlayer.h.id}`);
+                            // Vorheriges Video pausieren und stummschalten
+                            console.log(`Pausing and muting previous player ${currentPlayingVideoPlayer.h.id}`);
                             currentPlayingVideoPlayer.pauseVideo();
-                            currentPlayingVideoPlayer.seekTo(0);
+                            currentPlayingVideoPlayer.mute();
+                            if (currentPlayingVideoPlayer.muteButtonElement) {
+                                currentPlayingVideoPlayer.muteButtonElement.innerHTML = volumeOffSvg;
+                            }
+                            currentPlayingVideoPlayer.seekTo(0); // Optional: Video zurückspulen
                         }
 
                         if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                            console.log(`Playing player ${playerId}`);
+                            console.log(`Playing player ${playerId} (scrolled into view).`);
                             player.playVideo();
                             currentPlayingVideoPlayer = player;
 
-                            const muteBtn = player.muteButtonElement;
-                            if (isGloballyMuted) {
-                                player.mute();
-                                if (muteBtn) muteBtn.innerHTML = volumeOffSvg;
-                            } else {
-                                player.unMute();
-                                player.setVolume(10);
-                                if (muteBtn) muteBtn.innerHTML = volumeUpSvg;
+                            // Neues Video immer stumm starten
+                            player.mute();
+                            if (player.muteButtonElement) {
+                                player.muteButtonElement.innerHTML = volumeOffSvg; // Button zeigt "Ton einschalten"
                             }
                         }
                     } else if (!entry.isIntersecting && player.getPlayerState() === YT.PlayerState.PLAYING) {
-                        console.log(`Pausing player ${playerId} because it's out of view.`);
+                        // Video hat den Sichtbereich verlassen
+                        console.log(`Pausing and muting player ${playerId} because it's out of view.`);
                         player.pauseVideo();
+                        // Immer stummschalten, wenn es den Sichtbereich verlässt (egal ob vorher an oder aus)
+                        player.mute();
+                        if (player.muteButtonElement) {
+                            player.muteButtonElement.innerHTML = volumeOffSvg;
+                        }
                         if (currentPlayingVideoPlayer === player) {
                             currentPlayingVideoPlayer = null;
                         }
@@ -630,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const muteButton = document.createElement('button');
                 muteButton.classList.add('mute-button');
                 muteButton.dataset.playerId = uniquePlayerId;
-                muteButton.innerHTML = (isGloballyMuted ? volumeOffSvg : volumeUpSvg);
+                muteButton.innerHTML = volumeOffSvg; // Videos starten immer stumm, Button zeigt "Ton an"
                 videoControlsDiv.appendChild(muteButton);
 
                 videoSlide.innerHTML = `
@@ -642,7 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videosToInit.push({
                     id: uniquePlayerId,
                     videoId: item.embedUrl.split('/').pop().split('?')[0],
-                    autoplay: false,
+                    autoplay: false, // Autoplay wird durch IntersectionObserver gesteuert
                     muteButton: muteButton,
                 });
 
@@ -668,21 +771,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // Initiales Starten des ersten Videos, wenn die VideosToInit Liste nicht leer ist
             if (videosToInit.length > 0) {
                 setTimeout(() => {
-                    const firstVideoPlayer = youtubePlayers[videosToInit[0].id];
+                    const firstVideoData = videosToInit[0];
+                    const firstVideoPlayer = youtubePlayers[firstVideoData.id];
                     if (firstVideoPlayer && typeof firstVideoPlayer.playVideo === 'function') {
-                        console.log('Manually playing first video');
+                        console.log('Manually playing first video (initial load).');
                         firstVideoPlayer.playVideo();
                         currentPlayingVideoPlayer = firstVideoPlayer;
 
-                        if (isGloballyMuted) {
-                            firstVideoPlayer.mute();
-                            if (firstVideoPlayer.muteButtonElement) firstVideoPlayer.muteButtonElement.innerHTML = volumeOffSvg;
-                        } else {
-                            firstVideoPlayer.unMute();
-                            firstVideoPlayer.setVolume(10);
-                            if (firstVideoPlayer.muteButtonElement) firstVideoPlayer.muteButtonElement.innerHTML = volumeUpSvg;
+                        // Immer stummschalten beim initialen Start
+                        firstVideoPlayer.mute();
+                        if (firstVideoPlayer.muteButtonElement) {
+                            firstVideoPlayer.muteButtonElement.innerHTML = volumeOffSvg;
                         }
                     }
                 }, 100);
@@ -704,56 +806,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         switch (category) {
-case 'memes':
-            // Prüfe, ob eine Generierung aktiv ist (höchste Priorität, da Ladebildschirm angezeigt werden muss)
-            if (isMemeGenerationActive) {
-                showLoadingScreen(category, 'creating');
-                showMemeNotification(loadingMessages.memes.creating, 'loading');
-                return;
-            }
+            case 'memes':
+                        // Prüfe, ob eine Generierung aktiv ist (höchste Priorität, da Ladebildschirm angezeigt werden muss)
+                        if (isMemeGenerationActive) {
+                            showLoadingScreen(category, 'creating');
+                            showMemeNotification(loadingMessages.memes.creating, 'loading');
+                            return;
+                        }
 
-            // Prüfe, ob ein Meme im Puffer ist (wurde im Hintergrund generiert und wartet auf Anzeige)
-            if (generatedMemeBuffer) {
-                contentArea.innerHTML = ''; // Leere den Bereich für das neue Meme
-                displayMeme(generatedMemeBuffer); // Zeigt das neue Meme an (und setzt currentDisplayedMeme)
-                askForAnotherMemePrompt(); // Fügt den "Noch ein Meme?"-Prompt hinzu
-                generatedMemeBuffer = null; // Puffer leeren
-                hideMemeNotification(); // Notification ausblenden
-                return;
-            }
+                        // Prüfe, ob ein Meme im Puffer ist (wurde im Hintergrund generiert und wartet auf Anzeige)
+                        if (generatedMemeBuffer) {
+                            contentArea.innerHTML = ''; // Leere den Bereich für das neue Meme
+                            displayMeme(generatedMemeBuffer); // Zeigt das neue Meme an (und setzt currentDisplayedMeme)
+                            askForAnotherMemePrompt(); // Fügt den "Noch ein Meme?"-Prompt hinzu
+                            generatedMemeBuffer = null; // Puffer leeren
+                            hideMemeNotification(); // Notification ausblenden
+                            return;
+                        }
 
-            // Prüfe, ob es ein zuletzt angezeigtes Meme gibt
-            if (currentDisplayedMeme) {
-                // Überprüfe, ob das Meme bereits im DOM ist, um unnötiges Neurendern zu vermeiden
-                const memeImageInDOM = contentArea.querySelector(`img[src="${currentDisplayedMeme.image}"]`);
+                        // Prüfe, ob es ein zuletzt angezeigtes Meme gibt
+                        if (currentDisplayedMeme) {
+                            // Überprüfe, ob das Meme bereits im DOM ist, um unnötiges Neurendern zu vermeiden
+                            const memeImageInDOM = contentArea.querySelector(`img[src="${currentDisplayedMeme.image}"]`);
 
-                if (!memeImageInDOM) {
-                    // Wenn das Meme nicht im DOM ist (z.B. nach Kategoriewechsel), render es neu
-                    contentArea.innerHTML = ''; // Bereich leeren, bevor das Meme neu hinzugefügt wird
-                    displayMeme(currentDisplayedMeme);
-                }
-                // Füge immer den "Noch ein Meme?"-Prompt oder die "Alle gezeigt"-Nachricht hinzu
-                askForAnotherMemePrompt();
-                hideMemeNotification(); // Notification ausblenden
-                return; // Beende hier, da das Meme nun sichtbar ist und der Prompt korrekt gesetzt wurde
-            }
+                            if (!memeImageInDOM) {
+                                // Wenn das Meme nicht im DOM ist (z.B. nach Kategoriewechsel), render es neu
+                                contentArea.innerHTML = ''; // Bereich leeren, bevor das Meme neu hinzugefügt wird
+                                displayMeme(currentDisplayedMeme);
+                            }
+                            // Füge immer den "Noch ein Meme?"-Prompt oder die "Alle gezeigt"-Nachricht hinzu
+                            askForAnotherMemePrompt();
+                            hideMemeNotification(); // Notification ausblenden
+                            return; // Beende hier, da das Meme nun sichtbar ist und der Prompt korrekt gesetzt wurde
+                        }
 
-            // Wenn keine der obigen Bedingungen zutrifft (z.B. erster Klick auf Memes, oder alle Memes durch und kein currentDisplayedMeme gespeichert)
-            // Dann initialisiere das Array, wenn es leer ist.
-            if (memesArrayForGeneration.length === 0) {
-                memesArrayForGeneration = shuffleArray(allThemesContentData[currentThemeKey].memes);
-            }
+                        // Wenn keine der obigen Bedingungen zutrifft (z.B. erster Klick auf Memes, oder alle Memes durch und kein currentDisplayedMeme gespeichert)
+                        // Dann initialisiere das Array, wenn es leer ist.
+                        if (memesArrayForGeneration.length === 0) {
+                            memesArrayForGeneration = shuffleArray(allThemesContentData[currentThemeKey].memes);
+                        }
 
-            // Zeige den "Möchtest du erstellen?"-Prompt, wenn noch Memes zum Generieren da sind
-            if (memesArrayForGeneration.length > 0) {
-                showMemeGenerationPrompt();
-                hideMemeNotification();
-            } else {
-                // Alle Memes sind durch und keine weiteren generierbar (und kein currentDisplayedMeme zu zeigen)
-                contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
-                showMemeNotification(loadingMessages.memes.allShown, 'info', false);
-            }
-            break; // Ende des 'memes'-Case
+                        // Zeige den "Möchtest du erstellen?"-Prompt, wenn noch Memes zum Generieren da sind
+                        if (memesArrayForGeneration.length > 0) {
+                            showMemeGenerationPrompt();
+                            hideMemeNotification();
+                        } else {
+                            // Alle Memes sind durch und keine weiteren generierbar (und kein currentDisplayedMeme zu zeigen)
+                            contentArea.innerHTML = `<p style="text-align: center; margin-top: 20px;">${loadingMessages.memes.allShown}</p>`;
+                            showMemeNotification(loadingMessages.memes.allShown, 'info', false);
+                        }
+                        break; // Ende des 'memes'-Case
             case 'postings':
  		itemsToDisplay.forEach(item => {
                     if (item.type === 'twitter') {
@@ -808,7 +910,7 @@ case 'memes':
             playerVars: {
                 autoplay: 0,
                 controls: 0,
-                mute: 1,
+                mute: 1, // Videos starten IMMER stummgeschaltet, damit Autoplay auf iOS funktioniert
                 loop: 1,
                 playlist: videoData.videoId,
                 playsinline: 1,
@@ -825,7 +927,7 @@ case 'memes':
         });
         youtubePlayers[videoData.id] = player;
 
-        player.muteButtonElement = videoData.muteButton;
+        player.muteButtonElement = videoData.muteButton; // Referenz speichern
 
         console.log(`Player ${videoData.id} initialization attempted for video ID ${videoData.videoId}.`);
     }
@@ -834,14 +936,10 @@ case 'memes':
         console.log(`Player ${event.target.h.id} is ready.`);
         if (muteButtonElement) {
             muteButtonElement.addEventListener('click', () => toggleMute(event.target, muteButtonElement));
-            if (isGloballyMuted) {
-                event.target.mute();
-                muteButtonElement.innerHTML = volumeOffSvg;
-            } else {
-                event.target.unMute();
-                event.target.setVolume(10);
-                muteButtonElement.innerHTML = volumeUpSvg;
-            }
+            // Beim Ready-Event IMMER stummschalten und Mute-Button auf "Ton an" setzen
+            event.target.mute();
+            muteButtonElement.innerHTML = volumeOffSvg;
+            console.log(`Player ${event.target.h.id} ready: Force muted.`);
         }
     }
 
@@ -850,6 +948,7 @@ case 'memes':
         const player = youtubePlayers[playerId];
 
         if (muteButtonElement) {
+            // Dies aktualisiert den Button-Zustand basierend auf dem tatsächlichen Player-Zustand.
             if (player.isMuted()) {
                 muteButtonElement.innerHTML = volumeOffSvg;
             } else {
@@ -857,8 +956,15 @@ case 'memes':
             }
         }
 
+        // Wenn das Video endet, soll es stumm weiterlaufen (loop:1)
+        // Aber hier explizit sicherstellen, dass es gemutet bleibt
         if (event.data === YT.PlayerState.ENDED) {
-            event.target.playVideo();
+            event.target.playVideo(); // Führt zum Loop, wenn playerVars.loop=1
+            event.target.mute(); // Sicherstellen, dass der Loop stumm ist
+            if (muteButtonElement) {
+                muteButtonElement.innerHTML = volumeOffSvg;
+            }
+            console.log(`Player ${playerId} ended and looped, now muted.`);
         }
     }
 
