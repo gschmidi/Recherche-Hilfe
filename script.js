@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleMute(player, buttonElement) {
         if (player.isMuted()) {
             player.unMute();
-            player.setVolume(10); // Setze Lautstärke auf 10% bei Klick auf Unmute
+            player.setVolume(1); // Setze Lautstärke auf 10% bei Klick auf Unmute
             buttonElement.innerHTML = volumeUpSvg;
             isGloballyMuted = false; // Benutzer hat Ton aktiviert
             console.log(`Player ${player.h.id} unmuted to 10%. isGloballyMuted: ${isGloballyMuted}`);
