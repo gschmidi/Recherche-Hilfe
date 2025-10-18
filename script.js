@@ -21,9 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPlayingVideoPlayer = null;
     let videoIntersectionObserver = null;
 
-    // isGloballyMuted wird jetzt primär den Zustand des zuletzt
-    // interaktiven Players widerspiegeln (vom Nutzer unmutet oder gemutet).
-    // Es wird aber NICHT mehr automatisch die Lautstärke von neu erscheinenden Videos steuern.
+    // isGloballyMuted wird jetzt den Zustand des *zuletzt* interagierten Videos speichern.
+    // Aber Videos starten AUTOMATISCH immer gemutet.
     let isGloballyMuted = true;
 
     const loadedCategoriesPerTheme = {};
@@ -174,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPlayingVideoPlayer = null;
         // Beim Reset der Content-Area wird der globale Mute-Zustand auf true zurückgesetzt.
         // Das ist wichtig, damit beim nächsten Aufruf der Video-Kategorie alle Videos stumm starten.
-        isGloballyMuted = true;
+        isGloballyMuted = true; 
     }
 
     const volumeUpSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.98 7-4.66 7-8.77s-2.99-7.79-7-8.77z"/></svg>`;
@@ -194,6 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
             isGloballyMuted = true; // Benutzer hat Ton deaktiviert
             console.log(`Player ${player.h.id} muted. isGloballyMuted: ${isGloballyMuted}`);
         }
+        // Zusätzlicher Log, um den Zustand kurz nach der Aktion zu überprüfen (für Debugging auf iOS)
+        setTimeout(() => {
+            console.log(`Player ${player.h.id} (after 100ms in toggleMute): Muted=${player.isMuted()}, Volume=${player.getVolume()}`);
+        }, 100);
     }
 
     const allThemesContentData = {
@@ -653,7 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // NEU: Klarer Hinweis für den Benutzer, besonders für iOS
             videoMessageDiv.innerHTML = `
                 <p>Swipe im Videoplayer nach unten, um weitere Kurzvideos zu entdecken.</p>
-                <p class="ios-hint" style="font-size: 0.9em; margin-top: 10px; color: #ced4da;">(Videos starten immer stumm. Tippen Sie den Lautstärke-Button an, um den Ton auf 10% einzuschalten.)</p>
+                <p class="ios-hint" style="font-size: 0.9em; margin-top: 10px; color: #ced4da;">(Test 3%.)</p>
             `;
             contentArea.appendChild(videoMessageDiv);
 
@@ -940,6 +943,10 @@ document.addEventListener('DOMContentLoaded', () => {
             event.target.mute();
             muteButtonElement.innerHTML = volumeOffSvg;
             console.log(`Player ${event.target.h.id} ready: Force muted.`);
+            // Optional: Überprüfung der Lautstärke nach dem Muten
+            setTimeout(() => {
+                console.log(`Player ${event.target.h.id} (after 100ms in onPlayerReady): Muted=${event.target.isMuted()}, Volume=${event.target.getVolume()}`);
+            }, 100);
         }
     }
 
