@@ -146,46 +146,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function loadTwitterWidgets(targetElement) {
+        // Ensure the overlay is shown before starting widget load, in case it was hidden by some earlier logic.
+        // It won't create a new one if already active due to isPostingsLoadingOverlayActive flag.
+        showOverlayLoadingSpinner('postings', 'loadingEmbeds'); 
+
+        const finishLoading = (success) => {
+            if (isPostingsInitialRender && targetElement.id === 'contentArea') {
+                // This indicates a potential premature resolution by twttr.widgets.load()
+                // Do NOT hide the spinner yet. The re-click will trigger a new loading phase,
+                // and showOverlayLoadingSpinner will be called again, keeping it visible.
+                console.warn(`%c[Twitter Embeds] Premature ${success ? 'success' : 'error'} detected for initial postings load. Triggering re-click.`, 'color: orange; font-weight: bold;');
+                
+                isPostingsInitialRender = false; // Reset the flag after scheduling the re-click
+                if (postingsReclickTimeoutId) clearTimeout(postingsReclickTimeoutId);
+                postingsReclickTimeoutId = setTimeout(() => {
+                    const btn = document.getElementById('btnPostings');
+                    if (btn) {
+                        btn.click();
+                        console.log(`%c[Twitter Embeds] btnPostings re-clicked automatically due to ${success ? 'premature success' : 'error'}.`, 'color: #1DA1F2;');
+                    }
+                    postingsReclickTimeoutId = null;
+                }, 1000); // Give a bit more time before re-clicking
+            } else {
+                // If it's not the initial render, or if the initial render completed successfully
+                // without needing a re-click (which is less common with Twitter embeds),
+                // then hide the spinner after a small delay to allow visual rendering to catch up.
+                setTimeout(() => {
+                    hideOverlayLoadingSpinner();
+                    const logMessage = `All Twitter embeds in element ${targetElement.id || targetElement.tagName} have finished loading (after potential delay).`;
+                    console.log(`%c[Twitter Embeds] ${logMessage}`, 'color: #1DA1F2; font-weight: bold;');
+                }, 500); // Add a small delay to ensure visual rendering
+            }
+        };
+
         if (window.twttr && window.twttr.widgets) {
             console.log(`%c[Twitter Embeds] Attempting to load embeds via twttr.widgets.load(). Target: ${targetElement.id || targetElement.tagName}.`, 'color: #1DA1F2;');
             window.twttr.widgets.load(targetElement)
                 .then(() => {
-                    hideOverlayLoadingSpinner();
-                    const logMessage = `All Twitter embeds in element ${targetElement.id || targetElement.tagName} have finished loading.`;
-                    console.log(`%c[Twitter Embeds] ${logMessage}`, 'color: #1DA1F2; font-weight: bold;');
-
-                    if (isPostingsInitialRender && targetElement.id === 'contentArea') {
-                        console.warn(`%c[Twitter Embeds] Premature success detected for initial postings load. Triggering re-click.`, 'color: orange; font-weight: bold;');
-                        
-                        isPostingsInitialRender = false;
-                        if (postingsReclickTimeoutId) clearTimeout(postingsReclickTimeoutId);
-                        postingsReclickTimeoutId = setTimeout(() => {
-                            const btn = document.getElementById('btnPostings');
-                            if (btn) {
-                                btn.click();
-                                console.log(`%c[Twitter Embeds] btnPostings re-clicked automatically.`, 'color: #1DA1F2;');
-                            }
-                            postingsReclickTimeoutId = null;
-                        }, 1000);
-                    }
+                    finishLoading(true);
                 })
                 .catch(error => {
-                    hideOverlayLoadingSpinner();
                     console.error(`%c[Twitter Embeds] Error loading Twitter embeds in element ${targetElement.id || targetElement.tagName}:`, 'color: red; font-weight: bold;', error);
-                    
-                    if (isPostingsInitialRender && targetElement.id === 'contentArea') {
-                        console.error(`%c[Twitter Embeds] Retrying initial postings load due to error.`, 'color: red; font-weight: bold;');
-                        isPostingsInitialRender = false;
-                        if (postingsReclickTimeoutId) clearTimeout(postingsReclickTimeoutId);
-                        postingsReclickTimeoutId = setTimeout(() => {
-                            const btn = document.getElementById('btnPostings');
-                            if (btn) {
-                                btn.click();
-                                console.log(`%c[Twitter Embeds] btnPostings re-clicked automatically due to error.`, 'color: #1DA1F2;');
-                            }
-                            postingsReclickTimeoutId = null;
-                        }, 1500);
-                    }
+                    finishLoading(false);
                 });
         } else if (!twitterWidgetsLoaded) {
             console.log(`%c[Twitter Embeds] Twitter widgets.js not yet loaded. Appending script.`, 'color: #1DA1F2;');
@@ -199,68 +201,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log(`%c[Twitter Embeds] Attempting to load embeds via twttr.widgets.load() (after script load). Target: ${targetElement.id || targetElement.tagName}.`, 'color: #1DA1F2;');
                     window.twttr.widgets.load(targetElement)
                         .then(() => {
-                            hideOverlayLoadingSpinner();
-                            const logMessage = `All Twitter embeds (after script load) in element ${targetElement.id || targetElement.tagName} have finished loading.`;
-                            console.log(`%c[Twitter Embeds] ${logMessage}`, 'color: #1DA1F2; font-weight: bold;');
-                            
-                            if (isPostingsInitialRender && targetElement.id === 'contentArea') {
-                                console.warn(`%c[Twitter Embeds] Premature success detected (after script load) for initial postings load. Triggering re-click.`, 'color: orange; font-weight: bold;');
-                                isPostingsInitialRender = false;
-                                if (postingsReclickTimeoutId) clearTimeout(postingsReclickTimeoutId);
-                                postingsReclickTimeoutId = setTimeout(() => {
-                                    const btn = document.getElementById('btnPostings');
-                                    if (btn) {
-                                        btn.click();
-                                        console.log(`%c[Twitter Embeds] btnPostings re-clicked automatically (after script load).`, 'color: #1DA1F2;');
-                                    }
-                                    postingsReclickTimeoutId = null;
-                                }, 1000);
-                            }
+                            finishLoading(true);
                         })
                         .catch(error => {
-                            hideOverlayLoadingSpinner();
                             console.error(`%c[Twitter Embeds] Error loading Twitter embeds (after script load) in element ${targetElement.id || targetElement.tagName}:`, 'color: red; font-weight: bold;', error);
-                            if (isPostingsInitialRender && targetElement.id === 'contentArea') {
-                                 console.error(`%c[Twitter Embeds] Retrying initial postings load due to error (after script load).`, 'color: red; font-weight: bold;');
-                                 isPostingsInitialRender = false;
-                                 if (postingsReclickTimeoutId) clearTimeout(postingsReclickTimeoutId);
-                                 postingsReclickTimeoutId = setTimeout(() => {
-                                     const btn = document.getElementById('btnPostings');
-                                     if (btn) {
-                                         btn.click();
-                                         console.log(`%c[Twitter Embeds] btnPostings re-clicked automatically due to error (after script load).`, 'color: #1DA1F2;');
-                                     }
-                                     postingsReclickTimeoutId = null;
-                                 }, 1500);
-                             }
+                            finishLoading(false);
                         });
                 } else {
                     console.error(`%c[Twitter Embeds] twttr.widgets not available after script load, something went wrong.`, 'color: red;');
-                    hideOverlayLoadingSpinner();
+                    finishLoading(false); // Treat as error
                 }
             };
             script.onerror = () => {
                 console.error(`%c[Twitter Embeds] Failed to load Twitter widgets.js script from ${script.src}.`, 'color: red; font-weight: bold;');
-                hideOverlayLoadingSpinner();
-                if (isPostingsInitialRender && targetElement.id === 'contentArea') {
-                    console.error(`%c[Twitter Embeds] Retrying initial postings load due to script load error.`, 'color: red; font-weight: bold;');
-                    isPostingsInitialRender = false;
-                    if (postingsReclickTimeoutId) clearTimeout(postingsReclickTimeoutId);
-                    postingsReclickTimeoutId = setTimeout(() => {
-                        const btn = document.getElementById('btnPostings');
-                        if (btn) {
-                            btn.click();
-                            console.log(`%c[Twitter Embeds] btnPostings re-clicked automatically due to script load error.`, 'color: #1DA1F2;');
-                        }
-                        postingsReclickTimeoutId = null;
-                    }, 1500);
-                }
+                finishLoading(false); // Treat as error
             };
             document.body.appendChild(script);
             twitterWidgetsLoaded = true;
         } else {
             console.log(`%c[Twitter Embeds] twttr.widgets already loaded and script previously appended. Skipping.`, 'color: grey;');
-            hideOverlayLoadingSpinner();
+            // If widgets are already loaded and we're skipping, just hide the overlay
+            // with a slight delay.
+            setTimeout(() => {
+                hideOverlayLoadingSpinner();
+            }, 500);
         }
     }
 
@@ -283,12 +247,12 @@ document.addEventListener('DOMContentLoaded', () => {
         overlayDiv.style.left = '0';
         overlayDiv.style.width = '100%';
         overlayDiv.style.height = '100%';
-        overlayDiv.style.backgroundColor = '#e9ecef';
+        overlayDiv.style.backgroundColor = '#e9ecef'; // Ensure opaque background
         overlayDiv.style.display = 'flex';
         overlayDiv.style.flexDirection = 'column';
         overlayDiv.style.justifyContent = 'flex-start';
         overlayDiv.style.alignItems = 'center';
-        overlayDiv.style.zIndex = '10';
+        overlayDiv.style.zIndex = '1000'; // Increased z-index to ensure visibility
         overlayDiv.style.borderRadius = '8px';
         overlayDiv.style.padding = '0';
 
@@ -339,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contentArea.style.overflowY = 'auto';
         contentArea.classList.remove('video-mode');
         contentArea.classList.remove('chatbot-mode');
-        contentArea.style.position = 'relative';
+        contentArea.style.position = 'relative'; // Ensure contentArea is positioned for absolute overlay
 
         if (videoIntersectionObserver) {
             videoIntersectionObserver.disconnect();
@@ -543,8 +507,9 @@ document.addEventListener('DOMContentLoaded', () => {
             contentArea.appendChild(postItemDiv);
         });
 
-        showOverlayLoadingSpinner('postings', 'loadingEmbeds'); 
-        loadTwitterWidgets(contentArea);
+        // The showOverlayLoadingSpinner is now called at the beginning of loadTwitterWidgets
+        // This ensures it is active when the Twitter script starts fetching embeds.
+        loadTwitterWidgets(contentArea); 
     }
 
 
@@ -974,7 +939,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     postingsReclickTimeoutId = null;
                     console.log(`%c[Postings] Cleared pending re-click timeout for new category selection.`, 'color: grey;');
                 }
-                hideOverlayLoadingSpinner();
+                // Moved hideOverlayLoadingSpinner from here to ensure it's handled by loadTwitterWidgets logic or on resetContentAreaStyles
+                // hideOverlayLoadingSpinner(); 
 
                 if (currentMainLoadingTimeoutId) {
                     clearTimeout(currentMainLoadingTimeoutId);
@@ -1002,6 +968,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log(`%c[Postings] isPostingsInitialRender remains false (already loaded).`, 'color: grey;');
                     }
 
+                    // showOverlayLoadingSpinner is now called within loadTwitterWidgets
                     displayContent(category);
                     currentThemeLoadedCategories.add(category);
                     

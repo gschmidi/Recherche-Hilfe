@@ -232,12 +232,34 @@ Wichtige No-Gos (Priorität 1):
       const ChatInterface = ({ messages, isLoading, onSendMessage, showSuggestions }) => {
         const [inputText, setInputText] = useState('');
         const messagesEndRef = useRef(null);
+        const messagesContainerRef = useRef(null); // Ref for the scrollable div
+        const prevMessagesLengthRef = useRef(messages.length); // To track if a new message was added
 
         const scrollToBottom = () => {
           messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         };
 
-        useEffect(scrollToBottom, [messages]);
+        useEffect(() => {
+          const container = messagesContainerRef.current;
+          if (container) {
+            // Determine if the user was already scrolled near the bottom (with a small tolerance)
+            const isUserAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 20; 
+
+            // Check if new messages have been added (i.e., array length changed, not just content update)
+            const newMessagesAdded = messages.length > prevMessagesLengthRef.current;
+            
+            // Update the previous length reference for the next render cycle
+            prevMessagesLengthRef.current = messages.length;
+
+            // Scroll to bottom if:
+            // 1. The user was already at the bottom (to continue showing streaming updates).
+            // 2. Or, if new messages were added (e.g., user sent a message, or a new bot response started).
+            // 3. Or, if it's the very first message being rendered (covers initial welcome message).
+            if (isUserAtBottom || newMessagesAdded || messages.length === 1) {
+              scrollToBottom();
+            }
+          }
+        }, [messages]); // React to any changes in the messages array
 
         const handleSubmit = (e) => {
           e.preventDefault();
@@ -248,7 +270,7 @@ Wichtige No-Gos (Priorität 1):
 
         return (
           <div className="flex-1 flex flex-col p-4 overflow-hidden">
-            <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto space-y-4 pr-2">
               {messages.map((msg) => <Message key={msg.id} message={msg} />)}
               <div ref={messagesEndRef} />
             </div>
@@ -276,7 +298,7 @@ Wichtige No-Gos (Priorität 1):
                 <input
                   type="text"
                   value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
+                  onChange={(e) => e.target.value.length < 500 && setInputText(e.target.value)}
                   placeholder="Stelle eine Frage..."
                   disabled={isLoading}
                   className="flex-1 p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none transition-all text-white"
